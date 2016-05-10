@@ -82,6 +82,9 @@ var Player = function() {
     // player collider x-points
     this.x1collider = this.x + this.xdist - (this.xdist)/2 -35;
     this.x2collider = this.x1collide + 70;    
+    
+    // win counter
+    this.winCount = 0;
 };
 
 // update collsion points
@@ -115,8 +118,11 @@ Player.prototype.update = function(dt) {
     // check bounds y-axis
     if (ynew >= 373.5) {
         this.y = 373.5;
-    } else if (ynew <= 41.5) {
-        this.y = 41.5;
+    } else if (ynew < 41.5) {
+        // Show victory message and reset player
+        this.winCount += 1;
+        alert("You Won!! Your score is: " + this.winCount);
+        this.reset();
     } else {
         this.y += (this.yspeed * this.ydist);
         this.updateColliders();
