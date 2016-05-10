@@ -11,7 +11,7 @@ var Enemy = function(pos, speed) {
     this.xdist = 101;
     this.ydist = 83;
     
-    // speed of the enemy
+    // speed of the enemy and increase difficulty gradually
     this.speed = speed;
     
     // start position
@@ -28,6 +28,12 @@ Enemy.prototype.updateColliders = function() {
     // bug collider x-points
     this.x1collider = this.x - 50;
     this.x2collider = this.x + 100;
+}
+
+// change difficulty level
+Enemy.prototype.level = function(level) {
+    // update enemy speed
+     this.speed += this.speed * level * 0.15;
 }
 
 // Update the enemy's position, required method for game
@@ -49,7 +55,7 @@ Enemy.prototype.update = function(dt) {
     if (((this.x1collider < player.x1collider) && (this.x2collider > player.x1collider)) ||
        ((this.x1collider < player.x2collider) && (this.x2collider > player.x2collider))) {
         // reset player position
-        player.reset();
+        player.reset(0);
         console.log('collision!');
         console.log(this.y, player.y);
     }    
@@ -94,10 +100,20 @@ Player.prototype.updateColliders = function() {
     this.x2collider = this.x1collide + 70;
 }
 
-Player.prototype.reset = function() {
+Player.prototype.reset = function(state) {
     // player start position
     this.x = (this.xdist)*2;
     this.y = (this.ydist)*5 - ((this.ydist)/2);
+    
+    console.log(allEnemies);
+    // update difficulty level
+    if (state) {
+    for (var enemy in allEnemies) {
+        allEnemies[enemy].level(this.winCount);
+        console.log(allEnemies[enemy]);
+        console.log(allEnemies[enemy].speed);
+    }
+    }
 }
 
 Player.prototype.update = function(dt) {
@@ -122,7 +138,7 @@ Player.prototype.update = function(dt) {
         // Show victory message and reset player
         this.winCount += 1;
         alert("You Won!! Your score is: " + this.winCount);
-        this.reset();
+        this.reset(1);
     } else {
         this.y += (this.yspeed * this.ydist);
         this.updateColliders();
